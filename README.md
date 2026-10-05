@@ -1,13 +1,14 @@
 # Bank Account Management System
 
-A beginner-friendly console banking application built with Java 17, Maven, MySQL, and JDBC. The application uses a layered structure so the console, business rules, SQL access, and database configuration stay separate.
+A beginner-friendly desktop banking application built with Java 17 Swing, Maven, MySQL, and JDBC. The application uses a layered structure so the graphical interface, business rules, SQL access, and database configuration stay separate. A console entry point is also available through `com.bank.Main`.
 
 ## Features
 
 - Customer registration with generated IDs, email uniqueness, email/phone validation, and salted PBKDF2 password hashes.
-- Customer login for active customers. Passwords are never printed; run the program in a terminal that supports masked password input.
+- Customer login for active customers using a desktop sign-in screen. Passwords are masked while being entered.
 - Savings and current accounts with generated unique account numbers and `ACTIVE`, `BLOCKED`, or `CLOSED` status.
 - Account detail and balance views, deposits, withdrawals, account closure, and date-sortable transaction history.
+- Desktop dashboard with searchable accounts, transaction activity, and dialogs for deposits, withdrawals, transfers, and account closure.
 - Fund transfers update both accounts and add both transaction records in one database transaction. Account rows are locked in a stable order while transferring.
 - Prepared statements, foreign keys, unique constraints, indexes, and user-friendly error messages.
 
@@ -23,7 +24,9 @@ A beginner-friendly console banking application built with Java 17, Maven, MySQL
 
 ```text
 src/main/java/com/bank/
-	Main.java
+	BankApp.java  (Swing desktop launcher)
+	Main.java     (optional console launcher)
+	ui/           BankFrame.java
 	model/       Customer.java, Account.java, Transaction.java
 	dao/         CustomerDAO.java, AccountDAO.java, TransactionDAO.java
 	service/     CustomerService.java, AccountService.java, TransactionService.java
@@ -34,7 +37,7 @@ database.sql
 pom.xml
 ```
 
-`Main` handles terminal interaction. Services enforce business rules, DAOs execute prepared SQL statements, models represent database records, and `DBConnection` centralizes connection configuration.
+`BankApp` launches the Swing interface and `BankFrame` handles the desktop interaction. `Main` remains available as the optional console interface. Services enforce business rules, DAOs execute prepared SQL statements, models represent database records, and `DBConnection` centralizes connection configuration.
 
 ## Database Setup
 
@@ -70,7 +73,7 @@ Do not commit credentials or place real passwords in source control. The default
 1. Install JDK 17 and Apache Maven, and make sure `java` and `mvn` are available in the VS Code integrated terminal.
 2. Install the recommended Java Extension Pack. Reopen this repository as a folder.
 3. Execute `database.sql` and set the database environment variables in the VS Code terminal.
-4. Use the **Bank Management System** launch configuration or run the Maven commands below in the integrated terminal. The program uses `System.console()` to mask password entry, so launch it in a terminal rather than an output panel.
+4. Use the **Bank Management System** launch configuration or run the Maven command below. This starts the desktop banking window.
 
 ## Maven Commands
 
@@ -80,10 +83,16 @@ Build and compile:
 mvn clean package
 ```
 
-Run the console app:
+Run the desktop app:
 
 ```powershell
 mvn exec:java
+```
+
+To run the optional console version instead:
+
+```powershell
+mvn exec:java -Dexec.mainClass=com.bank.Main
 ```
 
 Alternatively, in VS Code use **Run > Start Debugging** with the included launch configuration, or run the **Maven: package** / **Maven: run banking app** tasks.
@@ -104,32 +113,9 @@ Or:
 
 The demo password is for local testing only. Change it or register a new customer for any non-demo deployment.
 
-## Sample Output
+## Desktop App
 
-```text
-====================================
-BANK MANAGEMENT SYSTEM
-
-1. Customer Registration
-2. Customer Login
-3. Exit
-Choose an option: 2
-Email: alex@example.com
-Password:
-Welcome, Alex Morgan.
-
-====================================
-CUSTOMER MENU
-1. Create Bank Account
-2. View Account Details
-3. Deposit Money
-4. Withdraw Money
-5. Transfer Money
-6. Check Balance
-7. Transaction History
-8. Close Account
-9. Logout
-```
+The first screen is a sign-in/register window. After login, the dashboard provides Overview, Accounts, and Activity views. From the dashboard you can create accounts, deposit, withdraw, transfer between accounts, search account numbers, review history in either date order, and close zero-balance accounts.
 
 ## Possible Future Enhancements
 
@@ -137,4 +123,4 @@ CUSTOMER MENU
 - Add audit logging, configurable daily transaction limits, and stronger session controls.
 - Add automated integration tests using a disposable MySQL instance or Testcontainers.
 - Add account statements as CSV/PDF exports and configurable currency/locale display.
-- Add a GUI or REST API after the core JDBC behavior is established.
+- Add a REST API after the core JDBC behavior is established.

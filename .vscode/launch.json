@@ -5,7 +5,7 @@
             "type": "java",
             "name": "Bank Management System",
             "request": "launch",
-            "mainClass": "com.bank.Main",
+            "mainClass": "com.bank.BankApp",
             "console": "integratedTerminal"
         }
     ]
